@@ -441,279 +441,394 @@ class WHY3ProofSolver:
         why3_config = self.generate_why3_config(theorem)
         why3_config_json = json.dumps(why3_config, indent=2, ensure_ascii=False)
         
-        # CSS-Styling
+        # CSS-Styling - Dark Mode, elegant
         css = """
         <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { 
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                line-height: 1.6;
-                color: #333;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                padding: 20px;
+            
+            :root {
+                --primary: #667eea;
+                --primary-dark: #5568d3;
+                --bg-dark: #0f1419;
+                --bg-secondary: #1a1f2e;
+                --bg-tertiary: #242b3c;
+                --text-primary: #e8eef7;
+                --text-secondary: #a8b2cc;
+                --border: #313d52;
+                --accent: #667eea;
             }
-            .container { 
-                max-width: 1200px; 
+            
+            body {
+                font-family: 'Segoe UI', 'Roboto', sans-serif;
+                background-color: var(--bg-dark);
+                color: var(--text-primary);
+                line-height: 1.7;
+                letter-spacing: 0.3px;
+            }
+            
+            .container {
+                max-width: 1200px;
                 margin: 0 auto;
-                background: white;
-                border-radius: 10px;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                overflow: hidden;
+                background: var(--bg-dark);
             }
+            
             .header {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                padding: 40px;
+                background: linear-gradient(135deg, var(--primary) 0%, #5568d3 100%);
+                padding: 60px 40px;
                 text-align: center;
+                border-bottom: 1px solid var(--border);
             }
-            .header h1 { font-size: 2.5em; margin-bottom: 10px; }
-            .header p { font-size: 1.1em; opacity: 0.9; }
-            .content { padding: 40px; }
-            .section { margin: 30px 0; }
-            .section-title { 
-                font-size: 1.8em; 
-                color: #667eea;
-                border-bottom: 3px solid #667eea;
-                padding-bottom: 10px;
-                margin-bottom: 20px;
-            }
-            .description { 
-                background: #f8f9fa; 
-                padding: 20px; 
-                border-left: 4px solid #667eea;
-                border-radius: 5px;
-                margin: 20px 0;
-            }
-            .formal-statement {
-                background: #f0f4ff;
-                padding: 20px;
-                border-radius: 5px;
-                font-family: 'Courier New', monospace;
-                overflow-x: auto;
-                border-left: 4px solid #764ba2;
-                margin: 20px 0;
-            }
-            .hypothesis-list, .conditions-list {
-                display: grid;
-                grid-template-columns: 1fr;
-                gap: 15px;
-                margin: 20px 0;
-            }
-            .hypothesis-item, .condition-item {
-                background: #f8f9fa;
-                padding: 15px;
-                border-radius: 5px;
-                border-left: 4px solid #667eea;
-            }
-            .hypothesis-item.definition { border-left-color: #28a745; }
-            .hypothesis-item.assumption { border-left-color: #007bff; }
-            .hypothesis-item.constraint { border-left-color: #ffc107; }
-            .hypothesis-name { 
-                font-weight: bold; 
-                color: #667eea;
-                font-size: 1.1em;
-                margin-bottom: 5px;
-            }
-            .hypothesis-type {
-                display: inline-block;
-                background: #667eea;
-                color: white;
-                padding: 3px 8px;
-                border-radius: 3px;
-                font-size: 0.85em;
-                margin-left: 10px;
-            }
-            .hypothesis-expression {
-                font-family: 'Courier New', monospace;
-                background: white;
-                padding: 10px;
-                border-radius: 3px;
-                margin: 10px 0;
-            }
-            .proof-steps {
-                background: #f8f9fa;
-                padding: 20px;
-                border-radius: 5px;
-                margin: 20px 0;
-            }
-            .proof-step {
-                background: white;
-                padding: 20px;
-                margin: 15px 0;
-                border-left: 4px solid #667eea;
-                border-radius: 3px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-            .proof-step-number {
-                display: inline-block;
-                background: #667eea;
-                color: white;
-                width: 30px;
-                height: 30px;
-                border-radius: 50%;
-                text-align: center;
-                line-height: 30px;
-                font-weight: bold;
-                margin-right: 10px;
-            }
-            .proof-step-title {
-                font-weight: bold;
-                font-size: 1.1em;
-                color: #333;
+            
+            .header h1 {
+                font-size: 2.2em;
+                font-weight: 300;
+                letter-spacing: 1px;
                 margin-bottom: 10px;
             }
-            .proof-step-justification {
-                background: #f0f4ff;
-                padding: 10px;
-                margin: 10px 0;
+            
+            .header p {
+                font-size: 0.95em;
+                opacity: 0.9;
+            }
+            
+            .content {
+                padding: 50px 40px;
+            }
+            
+            .section {
+                margin: 40px 0;
+            }
+            
+            .section-title {
+                font-size: 1.6em;
+                font-weight: 400;
+                color: var(--primary);
+                border-bottom: 2px solid var(--primary);
+                padding-bottom: 12px;
+                margin-bottom: 25px;
+                letter-spacing: 0.5px;
+            }
+            
+            .metadata {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 20px;
+                margin: 30px 0;
+            }
+            
+            .metadata-item {
+                background: var(--bg-secondary);
+                padding: 18px;
+                border-radius: 6px;
+                border-left: 3px solid var(--primary);
+            }
+            
+            .metadata-label {
+                font-size: 0.85em;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
+                margin-bottom: 8px;
+            }
+            
+            .metadata-value {
+                font-size: 1.1em;
+                color: var(--text-primary);
+                font-weight: 500;
+            }
+            
+            .status-badge {
+                display: inline-block;
+                padding: 6px 14px;
+                border-radius: 4px;
+                font-size: 0.9em;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+            }
+            
+            .status-pending { background: rgba(255, 193, 7, 0.15); color: #ffc107; }
+            .status-verified { background: rgba(76, 175, 80, 0.15); color: #4caf50; }
+            .status-in_progress { background: rgba(33, 150, 243, 0.15); color: #2196f3; }
+            .status-failed { background: rgba(244, 67, 54, 0.15); color: #f44336; }
+            
+            .description {
+                background: var(--bg-secondary);
+                padding: 25px;
+                border-radius: 6px;
+                border-left: 3px solid var(--primary);
+                line-height: 1.8;
+            }
+            
+            .formal-statement {
+                background: var(--bg-secondary);
+                padding: 25px;
+                border-radius: 6px;
+                border-left: 3px solid var(--primary);
+                font-family: 'Courier New', monospace;
+                overflow-x: auto;
+                font-size: 0.95em;
+                line-height: 1.6;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+            
+            .hypothesis-list, .conditions-list {
+                display: grid;
+                gap: 18px;
+                margin: 25px 0;
+            }
+            
+            .hypothesis-item, .condition-item {
+                background: var(--bg-secondary);
+                padding: 20px;
+                border-radius: 6px;
+                border-left: 3px solid var(--primary);
+            }
+            
+            .hypothesis-item.definition { border-left-color: #4caf50; }
+            .hypothesis-item.assumption { border-left-color: #2196f3; }
+            .hypothesis-item.constraint { border-left-color: #ff9800; }
+            .hypothesis-item.theorem { border-left-color: #9c27b0; }
+            
+            .hypothesis-name {
+                font-weight: 600;
+                color: var(--text-primary);
+                font-size: 1.05em;
+                margin-bottom: 8px;
+            }
+            
+            .hypothesis-type {
+                display: inline-block;
+                background: var(--primary);
+                color: white;
+                padding: 3px 10px;
                 border-radius: 3px;
+                font-size: 0.8em;
+                margin-left: 12px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+            }
+            
+            .hypothesis-expression {
+                font-family: 'Courier New', monospace;
+                background: var(--bg-tertiary);
+                padding: 12px;
+                border-radius: 4px;
+                margin: 12px 0;
                 font-size: 0.95em;
             }
+            
+            .proof-steps {
+                background: var(--bg-secondary);
+                padding: 25px;
+                border-radius: 6px;
+                margin: 25px 0;
+            }
+            
+            .proof-step {
+                background: var(--bg-tertiary);
+                padding: 20px;
+                margin: 15px 0;
+                border-left: 3px solid var(--primary);
+                border-radius: 4px;
+            }
+            
+            .proof-step-number {
+                display: inline-block;
+                background: var(--primary);
+                color: white;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                text-align: center;
+                line-height: 32px;
+                font-weight: 600;
+                margin-right: 12px;
+            }
+            
+            .proof-step-title {
+                font-weight: 600;
+                font-size: 1.05em;
+                color: var(--text-primary);
+                margin-bottom: 12px;
+                display: inline-block;
+            }
+            
+            .proof-step-justification {
+                background: var(--bg-secondary);
+                padding: 14px;
+                margin: 12px 0;
+                border-radius: 4px;
+                border-left: 2px solid var(--primary);
+                font-size: 0.95em;
+                line-height: 1.6;
+            }
+            
             .proof-step-formal {
                 font-family: 'Courier New', monospace;
-                background: white;
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 3px;
-                margin: 10px 0;
+                background: var(--bg-secondary);
+                padding: 14px;
+                border-radius: 4px;
+                margin: 12px 0;
+                font-size: 0.9em;
                 overflow-x: auto;
+                white-space: pre-wrap;
+                word-wrap: break-word;
             }
+            
             .references {
                 margin-top: 15px;
                 padding-top: 15px;
-                border-top: 1px solid #ddd;
+                border-top: 1px solid var(--border);
             }
+            
             .reference-list {
                 display: flex;
                 gap: 10px;
                 flex-wrap: wrap;
-                margin-top: 5px;
+                margin-top: 8px;
             }
+            
             .reference-tag {
-                background: #e9ecef;
-                padding: 5px 10px;
-                border-radius: 3px;
-                font-size: 0.9em;
+                background: var(--bg-secondary);
+                padding: 5px 12px;
+                border-radius: 4px;
+                font-size: 0.85em;
+                border: 1px solid var(--border);
             }
-            .metadata {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 20px;
-                margin: 20px 0;
-            }
-            .metadata-item {
-                background: #f8f9fa;
-                padding: 15px;
-                border-radius: 5px;
-            }
-            .metadata-label { 
-                font-weight: bold; 
-                color: #667eea;
-                font-size: 0.9em;
-                text-transform: uppercase;
-            }
-            .metadata-value { 
-                font-size: 1.1em; 
-                margin-top: 5px;
-                color: #333;
-            }
-            .status-badge {
-                display: inline-block;
-                padding: 5px 15px;
-                border-radius: 20px;
-                font-size: 0.9em;
-                font-weight: bold;
-            }
-            .status-pending { background: #fff3cd; color: #856404; }
-            .status-verified { background: #d4edda; color: #155724; }
-            .status-in_progress { background: #cce5ff; color: #004085; }
-            .status-failed { background: #f8d7da; color: #721c24; }
-            .footer {
-                background: #f8f9fa;
-                padding: 20px;
-                text-align: center;
-                border-top: 1px solid #ddd;
-                color: #666;
-                font-size: 0.9em;
-            }
-            .toc {
-                background: #f0f4ff;
-                padding: 20px;
-                border-radius: 5px;
-                margin: 20px 0;
-            }
-            .toc ul { margin-left: 20px; }
-            .toc li { margin: 5px 0; }
-            .toc a { color: #667eea; text-decoration: none; }
-            .toc a:hover { text-decoration: underline; }
+            
             .code-block {
-                background: #1e1e1e;
-                color: #d4d4d4;
+                background: var(--bg-secondary);
+                color: var(--text-primary);
                 padding: 20px;
-                border-radius: 5px;
+                border-radius: 6px;
                 overflow-x: auto;
                 font-family: 'Courier New', monospace;
                 font-size: 0.9em;
-                line-height: 1.5;
+                line-height: 1.6;
                 margin: 15px 0;
-                border-left: 4px solid #667eea;
+                border-left: 3px solid var(--primary);
+                white-space: pre-wrap;
+                word-wrap: break-word;
             }
+            
             .why3-section {
-                background: #f0f4ff;
-                padding: 20px;
-                border-radius: 5px;
-                margin: 20px 0;
-                border-left: 4px solid #667eea;
+                background: var(--bg-secondary);
+                padding: 25px;
+                border-radius: 6px;
+                margin: 25px 0;
+                border-left: 3px solid var(--primary);
             }
+            
             .why3-title {
-                font-size: 1.3em;
-                font-weight: bold;
-                color: #667eea;
-                margin-bottom: 15px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
+                font-size: 1.25em;
+                font-weight: 600;
+                color: var(--primary);
+                margin-bottom: 20px;
+                letter-spacing: 0.5px;
             }
+            
             .why3-flow {
                 display: flex;
                 align-items: center;
-                gap: 10px;
+                gap: 12px;
                 margin: 20px 0;
                 flex-wrap: wrap;
             }
+            
             .why3-flow-item {
-                background: white;
+                background: var(--bg-tertiary);
                 padding: 12px 18px;
-                border-radius: 5px;
-                border: 2px solid #667eea;
-                font-weight: bold;
-                color: #667eea;
+                border-radius: 4px;
+                border: 1px solid var(--primary);
+                font-weight: 500;
+                color: var(--primary);
+                font-size: 0.95em;
             }
+            
             .why3-flow-arrow {
-                font-size: 1.5em;
-                color: #667eea;
+                font-size: 1.3em;
+                color: var(--primary);
             }
+            
             .config-table {
                 width: 100%;
                 border-collapse: collapse;
                 margin: 15px 0;
-                background: white;
-                border-radius: 5px;
-                overflow: hidden;
             }
-            .config-table th, .config-table td {
-                padding: 12px;
-                text-align: left;
-                border-bottom: 1px solid #e0e0e0;
-            }
+            
             .config-table th {
-                background: #667eea;
+                background: var(--primary);
                 color: white;
-                font-weight: bold;
+                padding: 14px;
+                text-align: left;
+                font-weight: 600;
+                font-size: 0.95em;
+                letter-spacing: 0.5px;
             }
-            .config-key { color: #569cd6; font-weight: bold; }
-            .config-value { color: #333; }
+            
+            .config-table td {
+                padding: 12px 14px;
+                border-bottom: 1px solid var(--border);
+                font-size: 0.95em;
+            }
+            
+            .config-table tr:hover {
+                background: var(--bg-tertiary);
+            }
+            
+            .config-key { color: #2196f3; font-weight: 600; font-family: monospace; }
+            .config-value { color: var(--text-secondary); }
+            
+            .toc {
+                background: var(--bg-secondary);
+                padding: 20px;
+                border-radius: 6px;
+                margin: 25px 0;
+                border-left: 3px solid var(--primary);
+            }
+            
+            .toc h3 {
+                color: var(--primary);
+                margin-bottom: 15px;
+                font-size: 1.1em;
+                letter-spacing: 0.5px;
+            }
+            
+            .toc ul {
+                list-style: none;
+            }
+            
+            .toc li {
+                margin: 8px 0;
+                padding-left: 20px;
+            }
+            
+            .toc li:before {
+                content: "⊢";
+                margin-right: 10px;
+                color: var(--primary);
+            }
+            
+            .toc a {
+                color: var(--primary);
+                text-decoration: none;
+                font-size: 0.95em;
+                transition: opacity 0.2s;
+            }
+            
+            .toc a:hover {
+                opacity: 0.7;
+            }
+            
+            .footer {
+                background: var(--bg-secondary);
+                padding: 25px 40px;
+                text-align: center;
+                border-top: 1px solid var(--border);
+                color: var(--text-secondary);
+                font-size: 0.9em;
+            }
         </style>
         """
         
@@ -734,18 +849,18 @@ class WHY3ProofSolver:
             <div class="container">
                 <!-- Header -->
                 <div class="header">
-                    <h1>🔍 WHY3 Proof Solver</h1>
-                    <p>Formale mathematische Beweise</p>
+                    <h1>Formal Proof Solver</h1>
+                    <p>Mathematical Proof Verification via WHY3</p>
                 </div>
                 
                 <!-- Content -->
                 <div class="content">
                     <!-- Theorem Title -->
                     <div class="section">
-                        <h1 style="color: #667eea; margin-bottom: 10px;">{theorem.name}</h1>
+                        <h1 style="color: var(--primary); margin-bottom: 15px; font-weight: 300; letter-spacing: 0.5px;">{theorem.name}</h1>
                         <div class="metadata">
                             <div class="metadata-item">
-                                <div class="metadata-label">ID</div>
+                                <div class="metadata-label">Identifier</div>
                                 <div class="metadata-value">{theorem.theorem_id}</div>
                             </div>
                             <div class="metadata-item">
@@ -757,33 +872,33 @@ class WHY3ProofSolver:
                                 </div>
                             </div>
                             <div class="metadata-item">
-                                <div class="metadata-label">Schwierigkeitsgrad</div>
+                                <div class="metadata-label">Difficulty</div>
                                 <div class="metadata-value">{theorem.difficulty_level.upper()}</div>
                             </div>
                             <div class="metadata-item">
-                                <div class="metadata-label">Quelle</div>
-                                <div class="metadata-value">{theorem.source or 'Unbekannt'}</div>
+                                <div class="metadata-label">Source</div>
+                                <div class="metadata-value">{theorem.source or "Unknown"}</div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Table of Contents -->
                     <div class="toc">
-                        <h3>📋 Inhaltsverzeichnis</h3>
+                        <h3>Contents</h3>
                         <ul>
-                            <li><a href="#description">Beschreibung</a></li>
-                            <li><a href="#statement">Aussage</a></li>
-                            <li><a href="#hypotheses">Hypothesen</a></li>
-                            <li><a href="#conditions">Bedingungen</a></li>
-                            <li><a href="#proof">Beweis</a></li>
-                            <li><a href="#why3">WHY3 Solver</a></li>
-                            <li><a href="#conclusion">Schlussfolgerung</a></li>
+                            <li><a href="#description">Description</a></li>
+                            <li><a href="#statement">Theorem Statement</a></li>
+                            <li><a href="#hypotheses">Hypotheses</a></li>
+                            <li><a href="#conditions">Conditions</a></li>
+                            <li><a href="#proof">Proof</a></li>
+                            <li><a href="#why3">WHY3 Configuration</a></li>
+                            <li><a href="#conclusion">Conclusion</a></li>
                         </ul>
                     </div>
                     
                     <!-- Description -->
                     <div class="section" id="description">
-                        <h2 class="section-title">📖 Beschreibung</h2>
+                        <h2 class="section-title">Description</h2>
                         <div class="description">
                             {theorem.description}
                         </div>
@@ -791,16 +906,16 @@ class WHY3ProofSolver:
                     
                     <!-- Statement -->
                     <div class="section" id="statement">
-                        <h2 class="section-title">📝 Aussage</h2>
-                        <p><strong>Natürlichsprachlich:</strong></p>
+                        <h2 class="section-title">Theorem Statement</h2>
+                        <p style="margin-bottom: 15px; color: var(--text-secondary);">Natural Language Formulation:</p>
                         <div class="description">{theorem.statement}</div>
-                        <p style="margin-top: 20px;"><strong>Formal (HOL/Why3):</strong></p>
+                        <p style="margin-top: 20px; margin-bottom: 15px; color: var(--text-secondary);">Formal Notation (HOL/Why3):</p>
                         <div class="formal-statement">{theorem.formal_statement}</div>
                     </div>
                     
                     <!-- Hypotheses -->
                     <div class="section" id="hypotheses">
-                        <h2 class="section-title">🎯 Hypothesen ({len(theorem.hypotheses)})</h2>
+                        <h2 class="section-title">Hypotheses ({len(theorem.hypotheses)})</h2>
                         <div class="hypothesis-list">
                             {self._generate_hypotheses_html(theorem.hypotheses)}
                         </div>
@@ -808,7 +923,7 @@ class WHY3ProofSolver:
                     
                     <!-- Conditions -->
                     {f'''<div class="section" id="conditions">
-                        <h2 class="section-title">⚙️ Bedingungen ({len(theorem.conditions)})</h2>
+                        <h2 class="section-title">Conditions ({len(theorem.conditions)})</h2>
                         <div class="conditions-list">
                             {"".join([f'<div class="condition-item"><strong>({chr(96+i)})</strong> {cond}</div>' for i, cond in enumerate(theorem.conditions, 1)])}
                         </div>
@@ -816,9 +931,9 @@ class WHY3ProofSolver:
                     
                     <!-- Proof -->
                     <div class="section" id="proof">
-                        <h2 class="section-title">✅ Beweis ({len(theorem.proof_steps)} Schritte)</h2>
-                        <p style="margin-bottom: 20px;">
-                            <strong>Beweismethode:</strong> {theorem.proof_strategy}
+                        <h2 class="section-title">Proof ({len(theorem.proof_steps)} steps)</h2>
+                        <p style="margin-bottom: 20px; color: var(--text-secondary);">
+                            Proof Method: <strong>{theorem.proof_strategy}</strong>
                         </p>
                         <div class="proof-steps">
                             {self._generate_proof_steps_html(theorem.proof_steps)}
@@ -827,91 +942,84 @@ class WHY3ProofSolver:
                     
                     <!-- WHY3 Solver Section -->
                     <div class="section" id="why3">
-                        <h2 class="section-title">🤖 WHY3 Solver Konfiguration</h2>
+                        <h2 class="section-title">WHY3 Solver Configuration</h2>
                         
                         <div class="why3-section">
-                            <div class="why3-title">
-                                <span class="why3-icon">⚙️</span>
-                                Beweis-Pipeline
-                            </div>
+                            <div class="why3-title">Proof Pipeline</div>
                             <div class="why3-flow">
-                                <div class="why3-flow-item">Formale Aussage</div>
+                                <div class="why3-flow-item">Formal Statement</div>
                                 <div class="why3-flow-arrow">→</div>
                                 <div class="why3-flow-item">WHY3 Solver</div>
                                 <div class="why3-flow-arrow">→</div>
-                                <div class="why3-flow-item">Verifikation</div>
+                                <div class="why3-flow-item">Verification</div>
                             </div>
                         </div>
                         
-                        <h3 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">📨 Input für WHY3:</h3>
+                        <h3 style="color: var(--primary); margin-top: 30px; margin-bottom: 18px; font-size: 1.15em; font-weight: 600; letter-spacing: 0.5px;">Input Parameters for WHY3:</h3>
                         <table class="config-table">
                             <tr>
                                 <th>Parameter</th>
-                                <th>Wert</th>
-                                <th>Beschreibung</th>
+                                <th>Value</th>
+                                <th>Description</th>
                             </tr>
                             <tr>
                                 <td><span class="config-key">goal_name</span></td>
                                 <td><span class="config-value">{theorem.name}</span></td>
-                                <td>Name des Beweisziels</td>
+                                <td>Name of the proof goal</td>
                             </tr>
                             <tr>
                                 <td><span class="config-key">goal_id</span></td>
                                 <td><span class="config-value">{theorem.theorem_id}</span></td>
-                                <td>Eindeutige Kennung</td>
+                                <td>Unique identifier</td>
                             </tr>
                             <tr>
                                 <td><span class="config-key">solver</span></td>
                                 <td><span class="config-value">{self.context.solver_backend}</span></td>
-                                <td>Zu verwendender Solver</td>
+                                <td>Solver backend</td>
                             </tr>
                             <tr>
                                 <td><span class="config-key">timeout</span></td>
                                 <td><span class="config-value">{self.context.timeout_seconds}s</span></td>
-                                <td>Zeitlimit pro Beweis</td>
+                                <td>Time limit per proof</td>
                             </tr>
                             <tr>
                                 <td><span class="config-key">proof_strategy</span></td>
                                 <td><span class="config-value">{theorem.proof_strategy}</span></td>
-                                <td>Beweismethode</td>
+                                <td>Proof method</td>
                             </tr>
                             <tr>
                                 <td><span class="config-key">hypotheses_count</span></td>
                                 <td><span class="config-value">{len(theorem.hypotheses)}</span></td>
-                                <td>Anzahl Hypothesen</td>
+                                <td>Number of hypotheses</td>
                             </tr>
                             <tr>
                                 <td><span class="config-key">generate_certificates</span></td>
                                 <td><span class="config-value">{"true" if self.context.generate_certificates else "false"}</span></td>
-                                <td>Zertifikate generieren</td>
+                                <td>Generate certificates</td>
                             </tr>
                         </table>
                         
-                        <h3 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">📤 Formale Aussage an WHY3:</h3>
-                        <div class="code-block">
-                            <pre>{theorem.formal_statement}</pre>
-                        </div>
+                        <h3 style="color: var(--primary); margin-top: 30px; margin-bottom: 18px; font-size: 1.15em; font-weight: 600; letter-spacing: 0.5px;">Formal Statement Input to WHY3:</h3>
+                        <div class="code-block">{theorem.formal_statement}</div>
                         
-                        <h3 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">📋 WHY3 Vollständige Konfiguration (JSON):</h3>
-                        <div class="code-block">
-                            <pre>{why3_config_json}</pre>
-                        </div>
+                        <h3 style="color: var(--primary); margin-top: 30px; margin-bottom: 18px; font-size: 1.15em; font-weight: 600; letter-spacing: 0.5px;">Complete WHY3 Configuration (JSON):</h3>
+                        <div class="code-block">{why3_config_json}</div>
                         
-                        <h3 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">🔍 Verwendete Hypothesen im Solver:</h3>
-                        <div style="display: grid; gap: 10px;">
+                        <h3 style="color: var(--primary); margin-top: 30px; margin-bottom: 18px; font-size: 1.15em; font-weight: 600; letter-spacing: 0.5px;">Hypotheses Used by Solver:</h3>
+                        <div style="display: grid; gap: 15px;">
                             {self._generate_why3_hypotheses_html(theorem.hypotheses)}
                         </div>
                     </div>
                     
                     <!-- Conclusion -->
                     <div class="section" id="conclusion">
-                        <h2 class="section-title">🎓 Schlussfolgerung</h2>
+                        <h2 class="section-title">Conclusion</h2>
                         <div class="formal-statement">{theorem.conclusion}</div>
                     </div>
                     
                     <!-- Notes -->
                     {f'''<div class="section">
-                        <h2 class="section-title">📌 Notizen</h2>
+                        <h2 class="section-title">Notes</h2>
                         <div class="description">{theorem.notes}</div>
                     </div>''' if theorem.notes else ''}
                     
@@ -919,8 +1027,7 @@ class WHY3ProofSolver:
                 
                 <!-- Footer -->
                 <div class="footer">
-                    <p>Generiert: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')} | 
-                    WHY3 Proof Solver v1.0</p>
+                    <p>Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Formal Proof Solver v1.0 | WHY3</p>
                 </div>
             </div>
         </body>
@@ -1045,7 +1152,7 @@ class WHY3ProofSolver:
             status_class = f"status-{theorem.status.value}"
             row = f"""
             <tr>
-                <td><a href="{theorem_id}.html" style="color: #667eea; text-decoration: none; font-weight: bold;">{theorem.name}</a></td>
+                <td><a href="{theorem_id}.html" style="color: var(--primary); text-decoration: none; font-weight: 600;">{theorem.name}</a></td>
                 <td>{theorem.theorem_id}</td>
                 <td><span class="status-badge {status_class}">{theorem.status.value.upper()}</span></td>
                 <td>{theorem.difficulty_level.upper()}</td>
@@ -1057,132 +1164,156 @@ class WHY3ProofSolver:
         
         html = f"""
         <!DOCTYPE html>
-        <html lang="de">
+        <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>WHY3 Proof Solver - Übersicht</title>
+            <title>Formal Proof Solver - Theorems Overview</title>
             <style>
                 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+                :root {{
+                    --primary: #667eea;
+                    --bg-dark: #0f1419;
+                    --bg-secondary: #1a1f2e;
+                    --bg-tertiary: #242b3c;
+                    --text-primary: #e8eef7;
+                    --text-secondary: #a8b2cc;
+                    --border: #313d52;
+                }}
                 body {{ 
-                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    font-family: 'Segoe UI', 'Roboto', sans-serif;
+                    background: var(--bg-dark);
+                    color: var(--text-primary);
                     min-height: 100vh;
-                    padding: 20px;
+                    padding: 30px 20px;
                 }}
                 .container {{ 
                     max-width: 1200px; 
                     margin: 0 auto;
-                    background: white;
-                    border-radius: 10px;
-                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                    overflow: hidden;
+                    background: var(--bg-dark);
                 }}
                 .header {{
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    background: linear-gradient(135deg, var(--primary) 0%, #5568d3 100%);
                     color: white;
-                    padding: 40px;
+                    padding: 50px 40px;
+                    text-align: center;
+                    border-bottom: 1px solid var(--border);
+                    margin-bottom: 40px;
+                }}
+                .header h1 {{ font-size: 2.2em; margin-bottom: 10px; font-weight: 300; letter-spacing: 1px; }}
+                .header p {{ font-size: 1em; opacity: 0.9; }}
+                .content {{ padding: 0; }}
+                .stats {{
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 20px;
+                    margin-bottom: 40px;
+                }}
+                .stat-card {{
+                    background: var(--bg-secondary);
+                    padding: 25px;
+                    border-radius: 6px;
+                    border-left: 3px solid var(--primary);
                     text-align: center;
                 }}
-                .header h1 {{ font-size: 2.5em; margin-bottom: 10px; }}
-                .header p {{ font-size: 1.1em; opacity: 0.9; }}
-                .content {{ padding: 40px; }}
+                .stat-value {{
+                    font-size: 2.2em;
+                    font-weight: 300;
+                    color: var(--primary);
+                    margin-bottom: 8px;
+                }}
+                .stat-label {{
+                    color: var(--text-secondary);
+                    font-size: 0.9em;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }}
+                h2 {{
+                    font-size: 1.6em;
+                    font-weight: 400;
+                    color: var(--primary);
+                    border-bottom: 2px solid var(--primary);
+                    padding-bottom: 12px;
+                    margin-bottom: 25px;
+                    letter-spacing: 0.5px;
+                }}
                 table {{
                     width: 100%;
                     border-collapse: collapse;
                     margin: 20px 0;
                 }}
                 th {{
-                    background: #667eea;
+                    background: var(--primary);
                     color: white;
-                    padding: 15px;
+                    padding: 14px;
                     text-align: left;
-                    font-weight: bold;
+                    font-weight: 600;
+                    font-size: 0.95em;
+                    letter-spacing: 0.5px;
                 }}
                 td {{
-                    padding: 12px 15px;
-                    border-bottom: 1px solid #ddd;
+                    padding: 14px;
+                    border-bottom: 1px solid var(--border);
+                    font-size: 0.95em;
                 }}
-                tr:hover {{
-                    background: #f8f9fa;
-                }}
+                tr:hover {{ background: var(--bg-secondary); }}
                 .status-badge {{
                     display: inline-block;
-                    padding: 5px 15px;
-                    border-radius: 20px;
-                    font-size: 0.9em;
-                    font-weight: bold;
+                    padding: 6px 14px;
+                    border-radius: 4px;
+                    font-size: 0.85em;
+                    font-weight: 600;
+                    letter-spacing: 0.5px;
                 }}
-                .status-pending {{ background: #fff3cd; color: #856404; }}
-                .status-verified {{ background: #d4edda; color: #155724; }}
-                .status-in_progress {{ background: #cce5ff; color: #004085; }}
-                .status-failed {{ background: #f8d7da; color: #721c24; }}
+                .status-pending {{ background: rgba(255, 193, 7, 0.15); color: #ffc107; }}
+                .status-verified {{ background: rgba(76, 175, 80, 0.15); color: #4caf50; }}
+                .status-in_progress {{ background: rgba(33, 150, 243, 0.15); color: #2196f3; }}
+                .status-failed {{ background: rgba(244, 67, 54, 0.15); color: #f44336; }}
                 .footer {{
-                    background: #f8f9fa;
-                    padding: 20px;
+                    background: var(--bg-secondary);
+                    padding: 25px 40px;
                     text-align: center;
-                    border-top: 1px solid #ddd;
-                    color: #666;
+                    border-top: 1px solid var(--border);
+                    color: var(--text-secondary);
                     font-size: 0.9em;
-                }}
-                .stats {{
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                    gap: 20px;
-                    margin: 30px 0;
-                }}
-                .stat-card {{
-                    background: #f0f4ff;
-                    padding: 20px;
-                    border-radius: 5px;
-                    border-left: 4px solid #667eea;
-                    text-align: center;
-                }}
-                .stat-value {{
-                    font-size: 2em;
-                    font-weight: bold;
-                    color: #667eea;
-                }}
-                .stat-label {{
-                    color: #666;
-                    margin-top: 5px;
+                    margin-top: 40px;
                 }}
             </style>
         </head>
         <body>
             <div class="container">
                 <div class="header">
-                    <h1>🔍 WHY3 Proof Solver</h1>
-                    <p>Verwaltung formeller mathematischer Beweise</p>
+                    <h1>Formal Proof Solver</h1>
+                    <p>Mathematical Proof Verification via WHY3</p>
                 </div>
                 
                 <div class="content">
-                    <h2 style="color: #667eea; margin-bottom: 20px;">📚 Alle Theoreme</h2>
+                    <h2>Theorems Overview</h2>
                     
                     <div class="stats">
                         <div class="stat-card">
                             <div class="stat-value">{len(self.theorems)}</div>
-                            <div class="stat-label">Theoreme</div>
+                            <div class="stat-label">Theorems</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value">{sum(1 for t in self.theorems.values() if t.status == ProofStatus.VERIFIED)}</div>
-                            <div class="stat-label">Verifiziert</div>
+                            <div class="stat-label">Verified</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value">{sum(len(t.proof_steps) for t in self.theorems.values())}</div>
-                            <div class="stat-label">Beweis-Schritte</div>
+                            <div class="stat-label">Proof Steps</div>
                         </div>
                     </div>
                     
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>ID</th>
+                                <th>Theorem</th>
+                                <th>Identifier</th>
                                 <th>Status</th>
-                                <th>Schwierigkeit</th>
-                                <th>Quelle</th>
-                                <th>Schritte</th>
+                                <th>Difficulty</th>
+                                <th>Source</th>
+                                <th>Steps</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1192,8 +1323,7 @@ class WHY3ProofSolver:
                 </div>
                 
                 <div class="footer">
-                    <p>Generiert: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')} | 
-                    WHY3 Proof Solver v1.0</p>
+                    <p>Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Formal Proof Solver v1.0 | WHY3</p>
                 </div>
             </div>
         </body>
@@ -1204,17 +1334,17 @@ class WHY3ProofSolver:
         with open(index_file, 'w', encoding='utf-8') as f:
             f.write(html)
         
-        logger.info(f"Index-Seite erstellt: {index_file}")
+        logger.info(f"Generated index page: {index_file}")
 
 
 # ============================================================================
-# Einstiegspunkt
+# Entry Point
 # ============================================================================
 
 def main():
-    """Hauptfunktion zum Testen des Solvers"""
+    """Main function for testing the solver"""
     
-    # Erstelle Solver mit Standard-Konfiguration
+    # Create solver with standard configuration
     context = ProofContext(
         solver_backend="why3",
         timeout_seconds=60,
@@ -1225,11 +1355,11 @@ def main():
     solver = WHY3ProofSolver(context)
     
     print("\n" + "="*80)
-    print("WHY3 FORMAL PROOF SOLVER")
+    print("FORMAL PROOF SOLVER")
     print("="*80)
-    print("Bereit zum Laden von Beweisen aus JSON-Dateien\n")
+    print("Ready to load proofs from JSON files\n")
     
-    # Beispiel: Lade einen Beweis wenn JSON vorhanden ist
+    # Example: Load a proof if JSON exists
     json_file = Path("proofs/lhopital_rule.json")
     if json_file.exists():
         theorem = solver.load_proof_from_json(str(json_file))
@@ -1237,21 +1367,21 @@ def main():
         if theorem and solver.validate_theorem(theorem):
             solver.print_theorem_summary(theorem)
             
-            # Generiere WHY3-Konfiguration
+            # Generate WHY3 configuration
             config = solver.generate_why3_config(theorem)
-            print("WHY3 Konfiguration:")
+            print("WHY3 Configuration:")
             print(json.dumps(config, indent=2, ensure_ascii=False))
             
-            # Generiere statische Website
+            # Generate static website
             print("\n" + "="*80)
-            print("Generiere statische HTML-Website...")
+            print("Generating static HTML website...")
             print("="*80 + "\n")
             if solver.generate_static_website("output"):
-                print("✅ Website erfolgreich generiert!")
-                print("   Öffne 'output/index.html' im Browser um die Beweise zu sehen.\n")
+                print("Website generated successfully!")
+                print("   Open 'output/index.html' in your browser to view the proofs.\n")
     else:
-        print(f"Hinweis: Beispiel-JSON nicht gefunden unter {json_file}")
-        print("Erstelle zuerst eine JSON-Datei mit der Beweisstruktur.\n")
+        print(f"Note: Example JSON not found at {json_file}")
+        print("Create a JSON file with the proof structure first.\n")
 
 
 if __name__ == "__main__":

@@ -1,137 +1,161 @@
 
         <!DOCTYPE html>
-        <html lang="de">
+        <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>WHY3 Proof Solver - Übersicht</title>
+            <title>Formal Proof Solver - Theorems Overview</title>
             <style>
                 * { margin: 0; padding: 0; box-sizing: border-box; }
+                :root {
+                    --primary: #667eea;
+                    --bg-dark: #0f1419;
+                    --bg-secondary: #1a1f2e;
+                    --bg-tertiary: #242b3c;
+                    --text-primary: #e8eef7;
+                    --text-secondary: #a8b2cc;
+                    --border: #313d52;
+                }
                 body { 
-                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    font-family: 'Segoe UI', 'Roboto', sans-serif;
+                    background: var(--bg-dark);
+                    color: var(--text-primary);
                     min-height: 100vh;
-                    padding: 20px;
+                    padding: 30px 20px;
                 }
                 .container { 
                     max-width: 1200px; 
                     margin: 0 auto;
-                    background: white;
-                    border-radius: 10px;
-                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                    overflow: hidden;
+                    background: var(--bg-dark);
                 }
                 .header {
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    background: linear-gradient(135deg, var(--primary) 0%, #5568d3 100%);
                     color: white;
-                    padding: 40px;
+                    padding: 50px 40px;
+                    text-align: center;
+                    border-bottom: 1px solid var(--border);
+                    margin-bottom: 40px;
+                }
+                .header h1 { font-size: 2.2em; margin-bottom: 10px; font-weight: 300; letter-spacing: 1px; }
+                .header p { font-size: 1em; opacity: 0.9; }
+                .content { padding: 0; }
+                .stats {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 20px;
+                    margin-bottom: 40px;
+                }
+                .stat-card {
+                    background: var(--bg-secondary);
+                    padding: 25px;
+                    border-radius: 6px;
+                    border-left: 3px solid var(--primary);
                     text-align: center;
                 }
-                .header h1 { font-size: 2.5em; margin-bottom: 10px; }
-                .header p { font-size: 1.1em; opacity: 0.9; }
-                .content { padding: 40px; }
+                .stat-value {
+                    font-size: 2.2em;
+                    font-weight: 300;
+                    color: var(--primary);
+                    margin-bottom: 8px;
+                }
+                .stat-label {
+                    color: var(--text-secondary);
+                    font-size: 0.9em;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                h2 {
+                    font-size: 1.6em;
+                    font-weight: 400;
+                    color: var(--primary);
+                    border-bottom: 2px solid var(--primary);
+                    padding-bottom: 12px;
+                    margin-bottom: 25px;
+                    letter-spacing: 0.5px;
+                }
                 table {
                     width: 100%;
                     border-collapse: collapse;
                     margin: 20px 0;
                 }
                 th {
-                    background: #667eea;
+                    background: var(--primary);
                     color: white;
-                    padding: 15px;
+                    padding: 14px;
                     text-align: left;
-                    font-weight: bold;
+                    font-weight: 600;
+                    font-size: 0.95em;
+                    letter-spacing: 0.5px;
                 }
                 td {
-                    padding: 12px 15px;
-                    border-bottom: 1px solid #ddd;
+                    padding: 14px;
+                    border-bottom: 1px solid var(--border);
+                    font-size: 0.95em;
                 }
-                tr:hover {
-                    background: #f8f9fa;
-                }
+                tr:hover { background: var(--bg-secondary); }
                 .status-badge {
                     display: inline-block;
-                    padding: 5px 15px;
-                    border-radius: 20px;
-                    font-size: 0.9em;
-                    font-weight: bold;
+                    padding: 6px 14px;
+                    border-radius: 4px;
+                    font-size: 0.85em;
+                    font-weight: 600;
+                    letter-spacing: 0.5px;
                 }
-                .status-pending { background: #fff3cd; color: #856404; }
-                .status-verified { background: #d4edda; color: #155724; }
-                .status-in_progress { background: #cce5ff; color: #004085; }
-                .status-failed { background: #f8d7da; color: #721c24; }
+                .status-pending { background: rgba(255, 193, 7, 0.15); color: #ffc107; }
+                .status-verified { background: rgba(76, 175, 80, 0.15); color: #4caf50; }
+                .status-in_progress { background: rgba(33, 150, 243, 0.15); color: #2196f3; }
+                .status-failed { background: rgba(244, 67, 54, 0.15); color: #f44336; }
                 .footer {
-                    background: #f8f9fa;
-                    padding: 20px;
+                    background: var(--bg-secondary);
+                    padding: 25px 40px;
                     text-align: center;
-                    border-top: 1px solid #ddd;
-                    color: #666;
+                    border-top: 1px solid var(--border);
+                    color: var(--text-secondary);
                     font-size: 0.9em;
-                }
-                .stats {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                    gap: 20px;
-                    margin: 30px 0;
-                }
-                .stat-card {
-                    background: #f0f4ff;
-                    padding: 20px;
-                    border-radius: 5px;
-                    border-left: 4px solid #667eea;
-                    text-align: center;
-                }
-                .stat-value {
-                    font-size: 2em;
-                    font-weight: bold;
-                    color: #667eea;
-                }
-                .stat-label {
-                    color: #666;
-                    margin-top: 5px;
+                    margin-top: 40px;
                 }
             </style>
         </head>
         <body>
             <div class="container">
                 <div class="header">
-                    <h1>🔍 WHY3 Proof Solver</h1>
-                    <p>Verwaltung formeller mathematischer Beweise</p>
+                    <h1>Formal Proof Solver</h1>
+                    <p>Mathematical Proof Verification via WHY3</p>
                 </div>
                 
                 <div class="content">
-                    <h2 style="color: #667eea; margin-bottom: 20px;">📚 Alle Theoreme</h2>
+                    <h2>Theorems Overview</h2>
                     
                     <div class="stats">
                         <div class="stat-card">
                             <div class="stat-value">1</div>
-                            <div class="stat-label">Theoreme</div>
+                            <div class="stat-label">Theorems</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value">0</div>
-                            <div class="stat-label">Verifiziert</div>
+                            <div class="stat-label">Verified</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value">6</div>
-                            <div class="stat-label">Beweis-Schritte</div>
+                            <div class="stat-label">Proof Steps</div>
                         </div>
                     </div>
                     
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>ID</th>
+                                <th>Theorem</th>
+                                <th>Identifier</th>
                                 <th>Status</th>
-                                <th>Schwierigkeit</th>
-                                <th>Quelle</th>
-                                <th>Schritte</th>
+                                <th>Difficulty</th>
+                                <th>Source</th>
+                                <th>Steps</th>
                             </tr>
                         </thead>
                         <tbody>
                             
             <tr>
-                <td><a href="lhopital_7_15.html" style="color: #667eea; text-decoration: none; font-weight: bold;">Satz 7.15 - Regel von l'Hospital</a></td>
+                <td><a href="lhopital_7_15.html" style="color: var(--primary); text-decoration: none; font-weight: 600;">Satz 7.15 - Regel von l'Hospital</a></td>
                 <td>lhopital_7_15</td>
                 <td><span class="status-badge status-pending">PENDING</span></td>
                 <td>HARD</td>
@@ -144,8 +168,7 @@
                 </div>
                 
                 <div class="footer">
-                    <p>Generiert: 14.01.2026 21:36:16 | 
-                    WHY3 Proof Solver v1.0</p>
+                    <p>Generated: 2026-01-14 21:46:24 | Formal Proof Solver v1.0 | WHY3</p>
                 </div>
             </div>
         </body>
