@@ -29,7 +29,36 @@ Jedes Theorem bekommt eine dedizierte Seite mit:
 - **Bedingungen** (Fall a, b, c, ...)
 - **Beweis mit Schritten** (nummeriert, mit Begründung, Referenzen)
 - **Formale Ausdrücke** für jeden Schritt
+- **WHY3 Solver Konfiguration** - Was der Solver erhält und wie er es nutzt
 - **Fußnoten** und zusätzliche Notizen
+
+#### WHY3 Solver Sektion
+Eine dedizierte Sektion zeigt transparent:
+
+**Beweis-Pipeline:**
+```
+Formale Aussage → WHY3 Solver → Verifikation
+```
+
+**Input-Parameter Tabelle:**
+- Ziel-Name und ID
+- Solver-Backend (why3, z3, cvc4)
+- Timeout-Konfiguration
+- Beweismethode
+- Hypothesen-Anzahl
+- Zertifikat-Generierung
+
+**Formale Aussage:**
+Zeigt die exakte formale Notation, die an WHY3 übertragen wird
+
+**WHY3 Vollständige Konfiguration:**
+JSON-Format mit allen Parametern und Einstellungen, die der Solver erhält
+
+**Verwendete Hypothesen im Solver:**
+Auflistung aller Hypothesen mit:
+- Namen und Typ (Definition, Assumption, Constraint)
+- Natürlichsprachlicher Ausdruck
+- Formale HOL/Why3-Notation (mit Pfeil-Notation)
 
 ## 🎯 Beispiel: L'Hospital-Regel
 
@@ -42,6 +71,12 @@ Diese Seite zeigt:
 - 6 Beweis-Schritte
 - Formale und natürlichsprachliche Formulierungen
 - Verweise auf zugrundeliegende Theoreme
+
+**WHY3 Solver Section zeigt zusätzlich:**
+- Welche exakte formale Aussage der Solver erhält
+- Alle Parameter (Timeout, Backend, Strategie)
+- Komplette JSON-Konfiguration
+- Wie Hypothesen in formale Notation konvertiert werden
 
 ## 🎨 Design-Elemente
 
