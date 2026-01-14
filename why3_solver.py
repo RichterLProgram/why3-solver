@@ -437,6 +437,10 @@ class WHY3ProofSolver:
         Returns:
             HTML-String
         """
+        # WHY3-Konfiguration generieren
+        why3_config = self.generate_why3_config(theorem)
+        why3_config_json = json.dumps(why3_config, indent=2, ensure_ascii=False)
+        
         # CSS-Styling
         css = """
         <style>
@@ -643,6 +647,73 @@ class WHY3ProofSolver:
             .toc li { margin: 5px 0; }
             .toc a { color: #667eea; text-decoration: none; }
             .toc a:hover { text-decoration: underline; }
+            .code-block {
+                background: #1e1e1e;
+                color: #d4d4d4;
+                padding: 20px;
+                border-radius: 5px;
+                overflow-x: auto;
+                font-family: 'Courier New', monospace;
+                font-size: 0.9em;
+                line-height: 1.5;
+                margin: 15px 0;
+                border-left: 4px solid #667eea;
+            }
+            .why3-section {
+                background: #f0f4ff;
+                padding: 20px;
+                border-radius: 5px;
+                margin: 20px 0;
+                border-left: 4px solid #667eea;
+            }
+            .why3-title {
+                font-size: 1.3em;
+                font-weight: bold;
+                color: #667eea;
+                margin-bottom: 15px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .why3-flow {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin: 20px 0;
+                flex-wrap: wrap;
+            }
+            .why3-flow-item {
+                background: white;
+                padding: 12px 18px;
+                border-radius: 5px;
+                border: 2px solid #667eea;
+                font-weight: bold;
+                color: #667eea;
+            }
+            .why3-flow-arrow {
+                font-size: 1.5em;
+                color: #667eea;
+            }
+            .config-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 15px 0;
+                background: white;
+                border-radius: 5px;
+                overflow: hidden;
+            }
+            .config-table th, .config-table td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .config-table th {
+                background: #667eea;
+                color: white;
+                font-weight: bold;
+            }
+            .config-key { color: #569cd6; font-weight: bold; }
+            .config-value { color: #333; }
         </style>
         """
         
@@ -705,6 +776,7 @@ class WHY3ProofSolver:
                             <li><a href="#hypotheses">Hypothesen</a></li>
                             <li><a href="#conditions">Bedingungen</a></li>
                             <li><a href="#proof">Beweis</a></li>
+                            <li><a href="#why3">WHY3 Solver</a></li>
                             <li><a href="#conclusion">Schlussfolgerung</a></li>
                         </ul>
                     </div>
@@ -750,6 +822,84 @@ class WHY3ProofSolver:
                         </p>
                         <div class="proof-steps">
                             {self._generate_proof_steps_html(theorem.proof_steps)}
+                        </div>
+                    </div>
+                    
+                    <!-- WHY3 Solver Section -->
+                    <div class="section" id="why3">
+                        <h2 class="section-title">🤖 WHY3 Solver Konfiguration</h2>
+                        
+                        <div class="why3-section">
+                            <div class="why3-title">
+                                <span class="why3-icon">⚙️</span>
+                                Beweis-Pipeline
+                            </div>
+                            <div class="why3-flow">
+                                <div class="why3-flow-item">Formale Aussage</div>
+                                <div class="why3-flow-arrow">→</div>
+                                <div class="why3-flow-item">WHY3 Solver</div>
+                                <div class="why3-flow-arrow">→</div>
+                                <div class="why3-flow-item">Verifikation</div>
+                            </div>
+                        </div>
+                        
+                        <h3 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">📨 Input für WHY3:</h3>
+                        <table class="config-table">
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Wert</th>
+                                <th>Beschreibung</th>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">goal_name</span></td>
+                                <td><span class="config-value">{theorem.name}</span></td>
+                                <td>Name des Beweisziels</td>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">goal_id</span></td>
+                                <td><span class="config-value">{theorem.theorem_id}</span></td>
+                                <td>Eindeutige Kennung</td>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">solver</span></td>
+                                <td><span class="config-value">{self.context.solver_backend}</span></td>
+                                <td>Zu verwendender Solver</td>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">timeout</span></td>
+                                <td><span class="config-value">{self.context.timeout_seconds}s</span></td>
+                                <td>Zeitlimit pro Beweis</td>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">proof_strategy</span></td>
+                                <td><span class="config-value">{theorem.proof_strategy}</span></td>
+                                <td>Beweismethode</td>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">hypotheses_count</span></td>
+                                <td><span class="config-value">{len(theorem.hypotheses)}</span></td>
+                                <td>Anzahl Hypothesen</td>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">generate_certificates</span></td>
+                                <td><span class="config-value">{"true" if self.context.generate_certificates else "false"}</span></td>
+                                <td>Zertifikate generieren</td>
+                            </tr>
+                        </table>
+                        
+                        <h3 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">📤 Formale Aussage an WHY3:</h3>
+                        <div class="code-block">
+                            <pre>{theorem.formal_statement}</pre>
+                        </div>
+                        
+                        <h3 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">📋 WHY3 Vollständige Konfiguration (JSON):</h3>
+                        <div class="code-block">
+                            <pre>{why3_config_json}</pre>
+                        </div>
+                        
+                        <h3 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">🔍 Verwendete Hypothesen im Solver:</h3>
+                        <div style="display: grid; gap: 10px;">
+                            {self._generate_why3_hypotheses_html(theorem.hypotheses)}
                         </div>
                     </div>
                     
@@ -828,6 +978,23 @@ class WHY3ProofSolver:
                 </div>
                 {f'<div class="proof-step-formal">{step.formal_expression}</div>' if step.formal_expression else ''}
                 {references}
+            </div>
+            """
+            html_parts.append(html)
+        return "".join(html_parts)
+
+    def _generate_why3_hypotheses_html(self, hypotheses: List[Hypothesis]) -> str:
+        """Generiert HTML für WHY3 Hypothesen-Übersicht"""
+        html_parts = []
+        for hyp in hypotheses:
+            html = f"""
+            <div class="hypothesis-item {hyp.hypothesis_type.value}" style="margin: 0;">
+                <div class="hypothesis-name">
+                    {hyp.name}
+                    <span class="hypothesis-type">{hyp.hypothesis_type.value.upper()}</span>
+                </div>
+                <div class="hypothesis-expression">{hyp.expression}</div>
+                {f'<p style="font-family: monospace; font-size: 0.85em; color: #666; margin-top: 8px;">→ {hyp.formal_notation}</p>' if hyp.formal_notation else ''}
             </div>
             """
             html_parts.append(html)

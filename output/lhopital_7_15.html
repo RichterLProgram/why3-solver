@@ -210,6 +210,73 @@
             .toc li { margin: 5px 0; }
             .toc a { color: #667eea; text-decoration: none; }
             .toc a:hover { text-decoration: underline; }
+            .code-block {
+                background: #1e1e1e;
+                color: #d4d4d4;
+                padding: 20px;
+                border-radius: 5px;
+                overflow-x: auto;
+                font-family: 'Courier New', monospace;
+                font-size: 0.9em;
+                line-height: 1.5;
+                margin: 15px 0;
+                border-left: 4px solid #667eea;
+            }
+            .why3-section {
+                background: #f0f4ff;
+                padding: 20px;
+                border-radius: 5px;
+                margin: 20px 0;
+                border-left: 4px solid #667eea;
+            }
+            .why3-title {
+                font-size: 1.3em;
+                font-weight: bold;
+                color: #667eea;
+                margin-bottom: 15px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .why3-flow {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin: 20px 0;
+                flex-wrap: wrap;
+            }
+            .why3-flow-item {
+                background: white;
+                padding: 12px 18px;
+                border-radius: 5px;
+                border: 2px solid #667eea;
+                font-weight: bold;
+                color: #667eea;
+            }
+            .why3-flow-arrow {
+                font-size: 1.5em;
+                color: #667eea;
+            }
+            .config-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 15px 0;
+                background: white;
+                border-radius: 5px;
+                overflow: hidden;
+            }
+            .config-table th, .config-table td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .config-table th {
+                background: #667eea;
+                color: white;
+                font-weight: bold;
+            }
+            .config-key { color: #569cd6; font-weight: bold; }
+            .config-value { color: #333; }
         </style>
         
         </head>
@@ -259,6 +326,7 @@
                             <li><a href="#hypotheses">Hypothesen</a></li>
                             <li><a href="#conditions">Bedingungen</a></li>
                             <li><a href="#proof">Beweis</a></li>
+                            <li><a href="#why3">WHY3 Solver</a></li>
                             <li><a href="#conclusion">Schlussfolgerung</a></li>
                         </ul>
                     </div>
@@ -499,6 +567,227 @@
                         </div>
                     </div>
                     
+                    <!-- WHY3 Solver Section -->
+                    <div class="section" id="why3">
+                        <h2 class="section-title">🤖 WHY3 Solver Konfiguration</h2>
+                        
+                        <div class="why3-section">
+                            <div class="why3-title">
+                                <span class="why3-icon">⚙️</span>
+                                Beweis-Pipeline
+                            </div>
+                            <div class="why3-flow">
+                                <div class="why3-flow-item">Formale Aussage</div>
+                                <div class="why3-flow-arrow">→</div>
+                                <div class="why3-flow-item">WHY3 Solver</div>
+                                <div class="why3-flow-arrow">→</div>
+                                <div class="why3-flow-item">Verifikation</div>
+                            </div>
+                        </div>
+                        
+                        <h3 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">📨 Input für WHY3:</h3>
+                        <table class="config-table">
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Wert</th>
+                                <th>Beschreibung</th>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">goal_name</span></td>
+                                <td><span class="config-value">Satz 7.15 - Regel von l'Hospital</span></td>
+                                <td>Name des Beweisziels</td>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">goal_id</span></td>
+                                <td><span class="config-value">lhopital_7_15</span></td>
+                                <td>Eindeutige Kennung</td>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">solver</span></td>
+                                <td><span class="config-value">why3</span></td>
+                                <td>Zu verwendender Solver</td>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">timeout</span></td>
+                                <td><span class="config-value">60s</span></td>
+                                <td>Zeitlimit pro Beweis</td>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">proof_strategy</span></td>
+                                <td><span class="config-value">structured</span></td>
+                                <td>Beweismethode</td>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">hypotheses_count</span></td>
+                                <td><span class="config-value">8</span></td>
+                                <td>Anzahl Hypothesen</td>
+                            </tr>
+                            <tr>
+                                <td><span class="config-key">generate_certificates</span></td>
+                                <td><span class="config-value">true</span></td>
+                                <td>Zertifikate generieren</td>
+                            </tr>
+                        </table>
+                        
+                        <h3 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">📤 Formale Aussage an WHY3:</h3>
+                        <div class="code-block">
+                            <pre>∀(a b : ℝ) (f g : ℝ → ℝ) (x₀ : ℝ),
+  (a < b) ∧
+  (∀x ∈ (a,b), ∃f'(x), ∃g'(x), g'(x) ≠ 0) ∧
+  ((lim_{x→x₀} f(x) = 0 ∧ lim_{x→x₀} g(x) = 0) ∨ (lim_{x→x₀} f(x) = ∞ ∧ lim_{x→x₀} g(x) = ∞)) ∧
+  (∃ lim_{x→x₀} f'(x)/g'(x)) →
+  lim_{x→x₀} f(x)/g(x) = lim_{x→x₀} f'(x)/g'(x)</pre>
+                        </div>
+                        
+                        <h3 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">📋 WHY3 Vollständige Konfiguration (JSON):</h3>
+                        <div class="code-block">
+                            <pre>{
+  "goal_name": "Satz 7.15 - Regel von l'Hospital",
+  "goal_id": "lhopital_7_15",
+  "solver": "why3",
+  "timeout": 60,
+  "formal_statement": "∀(a b : ℝ) (f g : ℝ → ℝ) (x₀ : ℝ),\n  (a < b) ∧\n  (∀x ∈ (a,b), ∃f'(x), ∃g'(x), g'(x) ≠ 0) ∧\n  ((lim_{x→x₀} f(x) = 0 ∧ lim_{x→x₀} g(x) = 0) ∨ (lim_{x→x₀} f(x) = ∞ ∧ lim_{x→x₀} g(x) = ∞)) ∧\n  (∃ lim_{x→x₀} f'(x)/g'(x)) →\n  lim_{x→x₀} f(x)/g(x) = lim_{x→x₀} f'(x)/g'(x)",
+  "hypotheses": [
+    {
+      "name": "domain_boundaries",
+      "type": "definition",
+      "expression": "a, b ∈ ℝ ∪ {-∞, ∞}",
+      "description": "Die Grenzen des Definitionsbereichs",
+      "formal_notation": "∀(a b : ℝ ∪ {-∞, +∞})"
+    },
+    {
+      "name": "functions_defined",
+      "type": "definition",
+      "expression": "f, g : (a, b) → ℝ",
+      "description": "Beide Funktionen sind auf dem offenen Intervall (a,b) definiert und reellwertig",
+      "formal_notation": "∀(f g : ℝ → ℝ)"
+    },
+    {
+      "name": "differentiability",
+      "type": "assumption",
+      "expression": "f und g sind auf (a, b) differenzierbar",
+      "description": "Beiden Funktionen besitzen Ableitungen auf (a,b)",
+      "formal_notation": "∀x ∈ (a,b), ∃f'(x), ∃g'(x)"
+    },
+    {
+      "name": "derivative_non_zero",
+      "type": "constraint",
+      "expression": "g'(x) ≠ 0 für alle x ∈ (a, b)",
+      "description": "Die Ableitung von g ist niemals null",
+      "formal_notation": "∀x ∈ (a,b), g'(x) ≠ 0"
+    },
+    {
+      "name": "limit_point",
+      "type": "definition",
+      "expression": "x₀ ∈ {a, b}",
+      "description": "Der Grenzwertpunkt ist einer der Intervallgrenzen",
+      "formal_notation": "x₀ = a ∨ x₀ = b"
+    },
+    {
+      "name": "limit_condition_a",
+      "type": "assumption",
+      "expression": "lim_{x→x₀} f(x) = 0 = lim_{x→x₀} g(x)",
+      "description": "Fall (a): Beide Funktionen gehen gegen 0 (0/0-Fall)",
+      "formal_notation": "lim_{x→x₀} f(x) = 0 ∧ lim_{x→x₀} g(x) = 0"
+    },
+    {
+      "name": "limit_condition_b",
+      "type": "assumption",
+      "expression": "lim_{x→x₀} f(x) = ∞ = lim_{x→x₀} g(x)",
+      "description": "Fall (b): Beide Funktionen gehen gegen ∞ (∞/∞-Fall)",
+      "formal_notation": "lim_{x→x₀} f(x) = ∞ ∧ lim_{x→x₀} g(x) = ∞"
+    },
+    {
+      "name": "derivative_limit_exists",
+      "type": "assumption",
+      "expression": "lim_{x→x₀} f'(x)/g'(x) existiert",
+      "description": "Der Grenzwert des Quotienten der Ableitungen existiert",
+      "formal_notation": "∃L ∈ ℝ, ∀ε > 0, ∃δ > 0 : ∀x ∈ (a,b), 0 < |x - x₀| < δ → |f'(x)/g'(x) - L| < ε"
+    }
+  ],
+  "proof_strategy": "structured",
+  "generate_certificates": true
+}</pre>
+                        </div>
+                        
+                        <h3 style="color: #667eea; margin-top: 25px; margin-bottom: 15px;">🔍 Verwendete Hypothesen im Solver:</h3>
+                        <div style="display: grid; gap: 10px;">
+                            
+            <div class="hypothesis-item definition" style="margin: 0;">
+                <div class="hypothesis-name">
+                    domain_boundaries
+                    <span class="hypothesis-type">DEFINITION</span>
+                </div>
+                <div class="hypothesis-expression">a, b ∈ ℝ ∪ {-∞, ∞}</div>
+                <p style="font-family: monospace; font-size: 0.85em; color: #666; margin-top: 8px;">→ ∀(a b : ℝ ∪ {-∞, +∞})</p>
+            </div>
+            
+            <div class="hypothesis-item definition" style="margin: 0;">
+                <div class="hypothesis-name">
+                    functions_defined
+                    <span class="hypothesis-type">DEFINITION</span>
+                </div>
+                <div class="hypothesis-expression">f, g : (a, b) → ℝ</div>
+                <p style="font-family: monospace; font-size: 0.85em; color: #666; margin-top: 8px;">→ ∀(f g : ℝ → ℝ)</p>
+            </div>
+            
+            <div class="hypothesis-item assumption" style="margin: 0;">
+                <div class="hypothesis-name">
+                    differentiability
+                    <span class="hypothesis-type">ASSUMPTION</span>
+                </div>
+                <div class="hypothesis-expression">f und g sind auf (a, b) differenzierbar</div>
+                <p style="font-family: monospace; font-size: 0.85em; color: #666; margin-top: 8px;">→ ∀x ∈ (a,b), ∃f'(x), ∃g'(x)</p>
+            </div>
+            
+            <div class="hypothesis-item constraint" style="margin: 0;">
+                <div class="hypothesis-name">
+                    derivative_non_zero
+                    <span class="hypothesis-type">CONSTRAINT</span>
+                </div>
+                <div class="hypothesis-expression">g'(x) ≠ 0 für alle x ∈ (a, b)</div>
+                <p style="font-family: monospace; font-size: 0.85em; color: #666; margin-top: 8px;">→ ∀x ∈ (a,b), g'(x) ≠ 0</p>
+            </div>
+            
+            <div class="hypothesis-item definition" style="margin: 0;">
+                <div class="hypothesis-name">
+                    limit_point
+                    <span class="hypothesis-type">DEFINITION</span>
+                </div>
+                <div class="hypothesis-expression">x₀ ∈ {a, b}</div>
+                <p style="font-family: monospace; font-size: 0.85em; color: #666; margin-top: 8px;">→ x₀ = a ∨ x₀ = b</p>
+            </div>
+            
+            <div class="hypothesis-item assumption" style="margin: 0;">
+                <div class="hypothesis-name">
+                    limit_condition_a
+                    <span class="hypothesis-type">ASSUMPTION</span>
+                </div>
+                <div class="hypothesis-expression">lim_{x→x₀} f(x) = 0 = lim_{x→x₀} g(x)</div>
+                <p style="font-family: monospace; font-size: 0.85em; color: #666; margin-top: 8px;">→ lim_{x→x₀} f(x) = 0 ∧ lim_{x→x₀} g(x) = 0</p>
+            </div>
+            
+            <div class="hypothesis-item assumption" style="margin: 0;">
+                <div class="hypothesis-name">
+                    limit_condition_b
+                    <span class="hypothesis-type">ASSUMPTION</span>
+                </div>
+                <div class="hypothesis-expression">lim_{x→x₀} f(x) = ∞ = lim_{x→x₀} g(x)</div>
+                <p style="font-family: monospace; font-size: 0.85em; color: #666; margin-top: 8px;">→ lim_{x→x₀} f(x) = ∞ ∧ lim_{x→x₀} g(x) = ∞</p>
+            </div>
+            
+            <div class="hypothesis-item assumption" style="margin: 0;">
+                <div class="hypothesis-name">
+                    derivative_limit_exists
+                    <span class="hypothesis-type">ASSUMPTION</span>
+                </div>
+                <div class="hypothesis-expression">lim_{x→x₀} f'(x)/g'(x) existiert</div>
+                <p style="font-family: monospace; font-size: 0.85em; color: #666; margin-top: 8px;">→ ∃L ∈ ℝ, ∀ε > 0, ∃δ > 0 : ∀x ∈ (a,b), 0 < |x - x₀| < δ → |f'(x)/g'(x) - L| < ε</p>
+            </div>
+            
+                        </div>
+                    </div>
+                    
                     <!-- Conclusion -->
                     <div class="section" id="conclusion">
                         <h2 class="section-title">🎓 Schlussfolgerung</h2>
@@ -515,7 +804,7 @@
                 
                 <!-- Footer -->
                 <div class="footer">
-                    <p>Generiert: 14.01.2026 21:33:04 | 
+                    <p>Generiert: 14.01.2026 21:36:16 | 
                     WHY3 Proof Solver v1.0</p>
                 </div>
             </div>
