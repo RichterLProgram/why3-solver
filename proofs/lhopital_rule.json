@@ -1,0 +1,126 @@
+{
+  "theorem_id": "lhopital_7_15",
+  "name": "Satz 7.15 - Regel von l'Hospital",
+  "description": "Die Regel von l'Hospital ist ein fundamentales Theorem der Analysis zur Bestimmung von Grenzwerten von Quotienten von Funktionen.",
+  "statement": "Seien a, b ∈ ℝ ∪ {-∞, ∞}, f, g: (a,b) → ℝ differenzierbar mit g'(x) ≠ 0 für alle x ∈ (a,b). Sei x₀ ∈ {a,b} und es gelte (a) lim_{x→x₀} f(x) = 0 = lim_{x→x₀} g(x) oder (b) lim_{x→x₀} f(x) = ∞ = lim_{x→x₀} g(x). Falls lim_{x→x₀} f'(x)/g'(x) existiert, dann gilt lim_{x→x₀} f(x)/g(x) = lim_{x→x₀} f'(x)/g'(x).",
+  "formal_statement": "∀(a b : ℝ) (f g : ℝ → ℝ) (x₀ : ℝ),\n  (a < b) ∧\n  (∀x ∈ (a,b), ∃f'(x), ∃g'(x), g'(x) ≠ 0) ∧\n  ((lim_{x→x₀} f(x) = 0 ∧ lim_{x→x₀} g(x) = 0) ∨ (lim_{x→x₀} f(x) = ∞ ∧ lim_{x→x₀} g(x) = ∞)) ∧\n  (∃ lim_{x→x₀} f'(x)/g'(x)) →\n  lim_{x→x₀} f(x)/g(x) = lim_{x→x₀} f'(x)/g'(x)",
+  "hypotheses": [
+    {
+      "name": "domain_boundaries",
+      "type": "definition",
+      "expression": "a, b ∈ ℝ ∪ {-∞, ∞}",
+      "description": "Die Grenzen des Definitionsbereichs",
+      "formal_notation": "∀(a b : ℝ ∪ {-∞, +∞})"
+    },
+    {
+      "name": "functions_defined",
+      "type": "definition",
+      "expression": "f, g : (a, b) → ℝ",
+      "description": "Beide Funktionen sind auf dem offenen Intervall (a,b) definiert und reellwertig",
+      "formal_notation": "∀(f g : ℝ → ℝ)"
+    },
+    {
+      "name": "differentiability",
+      "type": "assumption",
+      "expression": "f und g sind auf (a, b) differenzierbar",
+      "description": "Beiden Funktionen besitzen Ableitungen auf (a,b)",
+      "formal_notation": "∀x ∈ (a,b), ∃f'(x), ∃g'(x)"
+    },
+    {
+      "name": "derivative_non_zero",
+      "type": "constraint",
+      "expression": "g'(x) ≠ 0 für alle x ∈ (a, b)",
+      "description": "Die Ableitung von g ist niemals null",
+      "formal_notation": "∀x ∈ (a,b), g'(x) ≠ 0"
+    },
+    {
+      "name": "limit_point",
+      "type": "definition",
+      "expression": "x₀ ∈ {a, b}",
+      "description": "Der Grenzwertpunkt ist einer der Intervallgrenzen",
+      "formal_notation": "x₀ = a ∨ x₀ = b"
+    },
+    {
+      "name": "limit_condition_a",
+      "type": "assumption",
+      "expression": "lim_{x→x₀} f(x) = 0 = lim_{x→x₀} g(x)",
+      "description": "Fall (a): Beide Funktionen gehen gegen 0 (0/0-Fall)",
+      "formal_notation": "lim_{x→x₀} f(x) = 0 ∧ lim_{x→x₀} g(x) = 0"
+    },
+    {
+      "name": "limit_condition_b",
+      "type": "assumption",
+      "expression": "lim_{x→x₀} f(x) = ∞ = lim_{x→x₀} g(x)",
+      "description": "Fall (b): Beide Funktionen gehen gegen ∞ (∞/∞-Fall)",
+      "formal_notation": "lim_{x→x₀} f(x) = ∞ ∧ lim_{x→x₀} g(x) = ∞"
+    },
+    {
+      "name": "derivative_limit_exists",
+      "type": "assumption",
+      "expression": "lim_{x→x₀} f'(x)/g'(x) existiert",
+      "description": "Der Grenzwert des Quotienten der Ableitungen existiert",
+      "formal_notation": "∃L ∈ ℝ, ∀ε > 0, ∃δ > 0 : ∀x ∈ (a,b), 0 < |x - x₀| < δ → |f'(x)/g'(x) - L| < ε"
+    }
+  ],
+  "conditions": [
+    "lim_{x→a⁺} f(x) = 0 = lim_{x→a⁺} g(x) ODER lim_{x→a⁺} f(x) = ∞ = lim_{x→a⁺} g(x)",
+    "g'(x) ≠ 0 für alle x ∈ (a, b)",
+    "lim_{x→x₀} f'(x)/g'(x) existiert"
+  ],
+  "conclusion": "lim_{x→x₀} f(x)/g(x) = lim_{x→x₀} f'(x)/g'(x)",
+  "proof_steps": [
+    {
+      "step_number": 1,
+      "description": "Vorbereitung: Stetige Fortsetzung",
+      "justification": "Da f, g auf (a,b) differenzierbar sind, sind sie auch stetig. Wegen lim_{x→a} f(x) = 0 = lim_{x→a} g(x) können f und g stetig auf [a,b) fortgesetzt werden mit f(a) = 0 = g(a).",
+      "referenced_hypotheses": ["differentiability", "limit_condition_a"],
+      "referenced_theorems": ["theorem_differentiable_implies_continuous", "theorem_continuous_extension"],
+      "formal_expression": "∀ε > 0, ∃δ > 0 : ∀x ∈ (a, a+δ), |f(x)| < ε ∧ |g(x)| < ε"
+    },
+    {
+      "step_number": 2,
+      "description": "Anwendung des verallgemeinerten Mittelwertsatzes",
+      "justification": "Sei x ∈ (a,b). Die Funktionen f und g sind auf [a,x] stetig und auf (a,x) differenzierbar. Mit g'(y) ≠ 0 für alle y ∈ (a,x) liefert der verallgemeinerte Mittelwertsatz: Es existiert ξ ∈ (a,x) mit f(x)/g(x) = [f(x) - f(a)]/[g(x) - g(a)] = f'(ξ)/g'(ξ).",
+      "referenced_hypotheses": ["derivative_non_zero"],
+      "referenced_theorems": ["theorem_generalized_mvt"],
+      "formal_expression": "∃ξ ∈ (a,x), f(x)/g(x) = f'(ξ)/g'(ξ)"
+    },
+    {
+      "step_number": 3,
+      "description": "Betrachtung einer Folge gegen x₀",
+      "justification": "Sei (x_n)_{n∈ℕ} eine Folge mit lim_{n→∞} x_n = a und x_n ∈ (a,b) für alle n. Dann existieren ξ_n ∈ (a, x_n) mit f(x_n)/g(x_n) = f'(ξ_n)/g'(ξ_n) für jedes n ∈ ℕ.",
+      "referenced_hypotheses": [],
+      "referenced_theorems": ["theorem_generalized_mvt"],
+      "formal_expression": "∀n ∈ ℕ, ∃ξ_n ∈ (a, x_n), f(x_n)/g(x_n) = f'(ξ_n)/g'(ξ_n)"
+    },
+    {
+      "step_number": 4,
+      "description": "Anwendung der Einschließungsregel (Squeeze-Theorem)",
+      "justification": "Wegen a < ξ_n ≤ x_n → a folgt aus der Einschließungsregel: lim_{n→∞} ξ_n = a.",
+      "referenced_hypotheses": [],
+      "referenced_theorems": ["theorem_squeeze_theorem"],
+      "formal_expression": "lim_{n→∞} ξ_n = a"
+    },
+    {
+      "step_number": 5,
+      "description": "Grenzwertberechnung durch Komposition",
+      "justification": "Da lim_{n→∞} ξ_n = a und ξ_n ∈ (a,b), und da lim_{x→a} f'(x)/g'(x) existiert, folgt durch Komposition von Grenzwerten: lim_{x→a} f(x)/g(x) = lim_{n→∞} f'(ξ_n)/g'(ξ_n) = lim_{x→a} f'(x)/g'(x).",
+      "referenced_hypotheses": ["derivative_limit_exists"],
+      "referenced_theorems": ["theorem_limit_composition"],
+      "formal_expression": "lim_{x→a} f(x)/g(x) = lim_{x→a} f'(x)/g'(x)"
+    },
+    {
+      "step_number": 6,
+      "description": "Schlussfolgerung",
+      "justification": "Dies ist genau die zu beweisende Aussage.",
+      "referenced_hypotheses": [],
+      "referenced_theorems": [],
+      "formal_expression": "lim_{x→x₀} f(x)/g(x) = lim_{x→x₀} f'(x)/g'(x) ∎"
+    }
+  ],
+  "proof_strategy": "structured",
+  "status": "pending",
+  "source": "Analysis II - Skript",
+  "difficulty_level": "hard",
+  "notes": "Beweis von Fall (a) für x₀ = a ∈ ℝ. Fall (b) und x₀ = b folgen analog. Die Regel von l'Hospital ist ein sehr wichtiges Werkzeug zur Berechnung von Grenzwerten und sollte vollständig verstanden werden."
+}
